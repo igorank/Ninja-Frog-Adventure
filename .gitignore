@@ -1,0 +1,7 @@
+game.vcxproj
+game.vcxproj.filters
+game.vcxproj.user
+game.sln
+x64/
+.vs/
+.gitignore.bak
