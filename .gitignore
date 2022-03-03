@@ -2,6 +2,10 @@ game.vcxproj
 game.vcxproj.filters
 game.vcxproj.user
 game.sln
+Ninja-Frog-Adventure.sln
+Ninja-Frog-Adventure.vcxproj
+Ninja-Frog-Adventure.vcxproj.filters
+Ninja-Frog-Adventure.vcxproj.user
 x64/
 .vs/
 .gitignore.bak
