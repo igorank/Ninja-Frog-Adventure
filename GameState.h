@@ -4,11 +4,23 @@
 class GameState
 {
 public:
+	virtual void Init() = 0;
+	virtual void Cleanup() = 0;
 
-    Game* game;
+	virtual void Pause() = 0;
+	virtual void Resume() = 0;
 
-    virtual void draw(const float dt) = 0;
-    virtual void update(const float dt) = 0;
-    virtual void handleInput() = 0;
+	virtual void HandleEvents(GameEngine* game) = 0;
+	virtual void Update(GameEngine* game) = 0;
+	virtual void Draw(GameEngine* game) = 0;
+
+	void ChangeState(GameEngine* game, GameState* state)
+	{
+		game->ChangeState(state);
+	}
+
+protected:
+	GameState() { }
 };
+
 

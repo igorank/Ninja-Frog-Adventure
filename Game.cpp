@@ -1,63 +1,70 @@
-#include <stack>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
+#include <iostream>
 #include "Game.h"
 #include "GameState.h"
 
-void Game::pushState(GameState* state)
+void GameEngine::Init(int width, int height, const char* title)
 {
-    this->states.push(state);
+	window.create(sf::VideoMode(width, height), title, sf::Style::Close);
 
-    return;
+	m_running = true;
+
+	std::cout << "GameEngine Init\n";
 }
 
-void Game::popState()
+void GameEngine::Cleanup()
 {
-    delete this->states.top();
-    this->states.pop();
+	while (!states.empty()) {
+		states.back()->Cleanup();
+		states.pop_back();
+	}
 
-    return;
+	std::cout << "GameEngine Cleanup\n";
 }
 
-void Game::changeState(GameState* state)
+void GameEngine::ChangeState(GameState* state)
 {
-    if (!this->states.empty())
-        popState();
-    pushState(state);
+	if (!states.empty()) {
+		states.back()->Cleanup();
+		states.pop_back();
+	}
 
-    return;
+	states.push_back(state);
+	states.back()->Init();
 }
 
-GameState* Game::peekState()
+void GameEngine::PushState(GameState* state)
 {
-    if (this->states.empty()) return nullptr;
-    return this->states.top();
+	if (!states.empty()) {
+		states.back()->Pause();
+	}
+
+	states.push_back(state);
+	states.back()->Init();
 }
 
-void Game::gameLoop()
+void GameEngine::PopState()
 {
-    sf::Clock clock;
-    float dt;
+	if (!states.empty()) {
+		states.back()->Cleanup();
+		states.pop_back();
+	}
 
-    while (this->window.isOpen())
-    {
-        dt = clock.restart().asSeconds();
-
-        if (peekState() == nullptr) continue;
-        peekState()->handleInput();
-        peekState()->update(dt);
-        this->window.clear(sf::Color::Black);
-        peekState()->draw(dt);
-        this->window.display();
-    }
+	if (!states.empty()) {
+		states.back()->Resume();
+	}
 }
 
-Game::Game()
+void GameEngine::HandleEvents()
 {
-    this->window.create(sf::VideoMode(800, 600), "Ninja Frog Adventure");
+	states.back()->HandleEvents(this);
 }
 
-Game::~Game()
+void GameEngine::Update()
 {
-    while (!this->states.empty()) popState();
+	states.back()->Update(this);
+}
+
+void GameEngine::Draw()
+{
+	states.back()->Draw(this);
 }

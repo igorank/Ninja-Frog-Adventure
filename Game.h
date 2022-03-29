@@ -1,24 +1,30 @@
-#pragma once
-#include <stack>
+#pragma once 
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <stack>
+using namespace std;
 
 class GameState;
 
-class Game
+class GameEngine
 {
-    public:
-        Game();
-        ~Game();
+public:
+	void Init(int width, int height, const char* title);
+	void Cleanup();
 
-        void pushState(GameState* state);
-        void popState();
-        void changeState(GameState* state);
-        GameState* peekState();
+	void ChangeState(GameState* state);
+	void PushState(GameState* state);
+	void PopState();
 
-        void gameLoop();
+	void HandleEvents();
+	void Update();
+	void Draw();
 
-    private:
-        std::stack<GameState*> states;
-        sf::RenderWindow window;
+	bool Running() { return m_running; }
+	void Quit() { m_running = false; }
+
+	sf::RenderWindow window;
+private:
+	vector<GameState*> states;
+	bool m_running;
 };
-
